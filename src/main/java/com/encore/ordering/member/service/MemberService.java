@@ -5,12 +5,18 @@ import com.encore.ordering.member.domain.Member;
 import com.encore.ordering.member.domain.Role;
 import com.encore.ordering.member.dto.LoginReqDto;
 import com.encore.ordering.member.dto.MemberCreateReqDto;
+import com.encore.ordering.member.dto.MemberResDto;
 import com.encore.ordering.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -26,19 +32,20 @@ public class MemberService {
     }
 
     public Member create(MemberCreateReqDto memberCreateReqDto) {
-//        Address 객체 조립
-        Address address = new Address(memberCreateReqDto.getCity(),
-                memberCreateReqDto.getStreet(),
-                memberCreateReqDto.getZipcode());
-        Member member = Member.builder()
-                .name(memberCreateReqDto.getName())
-                .email(memberCreateReqDto.getEmail())
-//                비밀번호 암호화
-                .password(passwordEncoder.encode(memberCreateReqDto.getPassword()))
-                .address(address)
-                .role(Role.USER)
-                .build();
+        memberCreateReqDto.setPassword(passwordEncoder.encode(memberCreateReqDto.getPassword()));
+        Member member = Member.toEntity(memberCreateReqDto);
         return memberRepository.save(member);
+    }
+
+    public MemberResDto findMyInfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        return MemberResDto.toMemberResDto(member); // dto 공통화 사용
+    }
+
+    public List<MemberResDto> findAll() {
+        List<Member> members = memberRepository.findAll();
+        return members.stream().map(m -> MemberResDto.toMemberResDto(m)).collect(Collectors.toList()); // dto 공통화 사용 + stream
     }
 
     public Member login(LoginReqDto loginReqDto) throws IllegalArgumentException{

@@ -39,12 +39,12 @@ public class SecurityConfig {
                 .authorizeRequests() // antMatchers의 url은 
                     .antMatchers("/member/create", "/items", "/item/image/**", "/doLogin") // doLogin 직접 구현할 것
                     .permitAll()
-                .anyRequest().authenticated() // 그 외 요청은 authenticated한다.
+                .anyRequest().authenticated() // 그 외 요청은 authenticated함(Authentication 객체 필요)
                 .and()
 //                세션을 사용하지 않겠다
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                jwt filter 추가
+//                JwtAuthFilter 실행 - 커스텀 필터이므로 antMatchers로 설정한 api도 들어가게 됨
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
