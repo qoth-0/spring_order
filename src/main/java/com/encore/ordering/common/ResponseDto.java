@@ -10,5 +10,5 @@ public class ResponseDto {
 //    성공한 메시지
     private HttpStatus status;
     private String message;
-    private Object dataId;
+    private Object result;
 }
