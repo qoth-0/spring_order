@@ -1,6 +1,6 @@
 package com.encore.ordering.member.controller;
 
-import com.encore.ordering.common.ResponseDto;
+import com.encore.ordering.common.CommonResponse;
 import com.encore.ordering.member.domain.Member;
 import com.encore.ordering.member.dto.LoginReqDto;
 import com.encore.ordering.member.dto.MemberCreateReqDto;
@@ -10,6 +10,7 @@ import com.encore.ordering.securities.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,12 +35,13 @@ public class MemberController {
 
     @PostMapping("/member/create")
 //    @Valid : RequestBody로 들어오는 객체에 대한 검증(검증의 세부 설정은 MemberCreateReqDto에 정의), @RequestBody : json 형태로 데이터 받음
-    public ResponseEntity<ResponseDto> memberCreate(@Valid @RequestBody MemberCreateReqDto memberCreateReqDto) {
+    public ResponseEntity<CommonResponse> memberCreate(@Valid @RequestBody MemberCreateReqDto memberCreateReqDto) {
         Member member = memberService.create(memberCreateReqDto);
 //        ResponseEntity는 body와 HttpStatus로 구성
-        return new ResponseEntity<>(new ResponseDto(HttpStatus.CREATED, "member successfully created", member.getId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CommonResponse(HttpStatus.CREATED, "member successfully created", member.getId()), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // ADMIN만 접근 가능
     @GetMapping("/members")
     public List<MemberResDto> members() {
         return memberService.findAll();
@@ -55,13 +57,13 @@ public class MemberController {
 //    @GetMapping("/member/myorders") // 사용자용
 
     @PostMapping("/doLogin")
-    public ResponseEntity<ResponseDto> memberLogin(@Valid @RequestBody LoginReqDto loginReqDto) {
+    public ResponseEntity<CommonResponse> memberLogin(@Valid @RequestBody LoginReqDto loginReqDto) {
         Member member = memberService.login(loginReqDto);
 //        토큰 생성(페이로드에 email, role 삽입)
         String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
         Map<String, Object> member_info = new HashMap<>();
         member_info.put("id", member.getId());
         member_info.put("token", jwtToken);
-        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "member successfully logined", member_info), HttpStatus.OK);
+        return new ResponseEntity<>(new CommonResponse(HttpStatus.OK, "member successfully logined", member_info), HttpStatus.OK);
     }
 }

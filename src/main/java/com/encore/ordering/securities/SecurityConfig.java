@@ -36,8 +36,8 @@ public class SecurityConfig {
                 .csrf().disable() // csrf 보안 사용 x - RESTAPI에서는 구조적으로 csrf공격이 어려움
                 .cors().and() // CORS 활성화 - 특정 도메인만 허용
                 .httpBasic().disable() // http에 대한 기본 authentication은 사용 x - 직접 커스텀할 것
-                .authorizeRequests() // antMatchers의 url은 
-                    .antMatchers("/member/create", "/items", "/item/image/**", "/doLogin") // doLogin 직접 구현할 것
+                .authorizeRequests() // antMatchers의 url은 로그인 안해도 접근 가능
+                    .antMatchers("/member/create", "/items", "/item/*/image", "/doLogin") // doLogin 직접 구현할 것
                     .permitAll()
                 .anyRequest().authenticated() // 그 외 요청은 authenticated함(Authentication 객체 필요)
                 .and()
@@ -45,7 +45,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 //                JwtAuthFilter 실행 - 커스텀 필터이므로 antMatchers로 설정한 api도 들어가게 됨
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//                formlogin에 사용되는 UsernamePasswordAuthenticationFilter과 같은 기능을 하므로 addFilterBefore로 순서 맞춰줌
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // User
                 .build();
     }
 }

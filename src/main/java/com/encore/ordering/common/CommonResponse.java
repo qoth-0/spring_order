@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @AllArgsConstructor
-public class ResponseDto {
+public class CommonResponse {
 //    성공한 메시지
     private HttpStatus status;
     private String message;

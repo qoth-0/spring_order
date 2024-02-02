@@ -4,6 +4,7 @@ import com.encore.ordering.common.ErrorResponseDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,9 @@ import java.util.List;
 @Component
 public class JwtAuthFilter extends GenericFilter {
 
+    @Value("${jwt.secretKey}")
+    private String secretKey;
+
 //    JwtAuthFilter 호출 시 doFilter 자동 실행
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -39,7 +43,7 @@ public class JwtAuthFilter extends GenericFilter {
                 String token = bearerToken.substring(7);
 //                 추출된 토큰을 검증 후 Authentication객체 생성
             //        토큰 검증 및 claims 추출
-                Claims claims = Jwts.parser().setSigningKey("mysecret").parseClaimsJws(token).getBody();
+                Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
             //        Authentication객체를 생성하기 위한 UserDetails 생성
                 List<GrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role"))); // ROLE_권한 -> 이 패턴으로 스프링에서 기본적으로 권한체크, role은 map에 들어있으므로 get()

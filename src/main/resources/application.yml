@@ -16,3 +16,7 @@ spring:
     hibernate:
       ddl-auto: update
     show_sql: true
+jwt:
+  expiration: 30 # 30분
+  secretKey: mysecret
+
