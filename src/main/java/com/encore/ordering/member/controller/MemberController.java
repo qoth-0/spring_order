@@ -52,8 +52,10 @@ public class MemberController {
         return memberService.findMyInfo();
     }
 
+//    @PreAuthorize("hasRole('ADMIN')")
 //    @GetMapping("/member/{id}/orders") // 관리자용
-//
+
+//    @PreAuthorize("hasRole('ADMIN') or #email == authentication.principal.username")
 //    @GetMapping("/member/myorders") // 사용자용
 
     @PostMapping("/doLogin")

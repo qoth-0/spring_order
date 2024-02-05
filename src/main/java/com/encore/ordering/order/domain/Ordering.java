@@ -28,7 +28,7 @@ public class Ordering {
     private Member member;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus = OrderStatus.ORDERED; // Builder.Default를 사용해야 값이 적용됨
+    private OrderStatus orderStatus = OrderStatus.ORDERED; // @Builder.Default를 사용해야 값이 적용됨
 
     @OneToMany(mappedBy = "ordering", cascade = CascadeType.PERSIST) // 기본값이 lazy
     private List<OrderItem> orderItems = new ArrayList<>();
