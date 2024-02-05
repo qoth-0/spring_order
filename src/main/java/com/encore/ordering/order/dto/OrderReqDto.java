@@ -24,7 +24,6 @@ public class OrderReqDto {
     public static class OrderReqItemDto {
         private Long itemId;
         private int count;
-
     }
 
 }

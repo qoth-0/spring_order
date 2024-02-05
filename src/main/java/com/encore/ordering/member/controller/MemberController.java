@@ -6,15 +6,14 @@ import com.encore.ordering.member.dto.LoginReqDto;
 import com.encore.ordering.member.dto.MemberCreateReqDto;
 import com.encore.ordering.member.dto.MemberResDto;
 import com.encore.ordering.member.service.MemberService;
+import com.encore.ordering.order.dto.OrderResDto;
+import com.encore.ordering.order.service.OrderService;
 import com.encore.ordering.securities.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -26,11 +25,13 @@ public class MemberController {
 
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final OrderService orderService;
 
     @Autowired
-    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider, OrderService orderService) {
         this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.orderService = orderService;
     }
 
     @PostMapping("/member/create")
@@ -52,11 +53,16 @@ public class MemberController {
         return memberService.findMyInfo();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @GetMapping("/member/{id}/orders") // 관리자용
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/member/{id}/orders") // 관리자용
+    public List<OrderResDto> memberOrders(@PathVariable Long id) {
+        return orderService.findByMember(id);
+    }
 
-//    @PreAuthorize("hasRole('ADMIN') or #email == authentication.principal.username")
-//    @GetMapping("/member/myorders") // 사용자용
+    @GetMapping("/member/myorders") // 사용자용
+    public List<OrderResDto> myOrders() {
+        return orderService.findMyOrders();
+    }
 
     @PostMapping("/doLogin")
     public ResponseEntity<CommonResponse> memberLogin(@Valid @RequestBody LoginReqDto loginReqDto) {
