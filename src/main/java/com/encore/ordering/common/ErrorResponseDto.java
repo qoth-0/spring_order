@@ -11,8 +11,8 @@ public class ErrorResponseDto {
     public static ResponseEntity<Map<String, Object>> makeMessage(HttpStatus status, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("status", Integer.toString(status.value()));
-        body.put("error message", message);
-        body.put("status message", status.getReasonPhrase());
+        body.put("error_message", message);
+        body.put("status_message", status.getReasonPhrase());
         return new ResponseEntity<>(body, status);
     }
 }

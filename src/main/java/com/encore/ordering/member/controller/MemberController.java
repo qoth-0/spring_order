@@ -68,7 +68,7 @@ public class MemberController {
     public ResponseEntity<CommonResponse> memberLogin(@Valid @RequestBody LoginReqDto loginReqDto) {
         Member member = memberService.login(loginReqDto);
 //        토큰 생성(페이로드에 email, role 삽입)
-        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+        String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString()); // 이부분 분기처리해서 "SELLER"로 넣으면 서버하나가능
         Map<String, Object> member_info = new HashMap<>();
         member_info.put("id", member.getId());
         member_info.put("token", jwtToken);

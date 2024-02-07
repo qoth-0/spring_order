@@ -49,13 +49,12 @@ public class Member {
         Address address = new Address(memberCreateReqDto.getCity(),
                 memberCreateReqDto.getStreet(),
                 memberCreateReqDto.getZipcode());
-        Member member = Member.builder()
+        return Member.builder()
                 .name(memberCreateReqDto.getName())
                 .email(memberCreateReqDto.getEmail())
                 .password(memberCreateReqDto.getPassword())
                 .address(address)
                 .role(Role.USER)
                 .build();
-        return member;
     }
 }

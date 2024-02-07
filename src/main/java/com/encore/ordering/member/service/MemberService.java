@@ -31,8 +31,11 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Member create(MemberCreateReqDto memberCreateReqDto) {
+    public Member create(MemberCreateReqDto memberCreateReqDto) throws IllegalArgumentException{
         memberCreateReqDto.setPassword(passwordEncoder.encode(memberCreateReqDto.getPassword()));
+        if(memberRepository.findByEmail(memberCreateReqDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
         Member member = Member.toEntity(memberCreateReqDto);
         return memberRepository.save(member);
     }
