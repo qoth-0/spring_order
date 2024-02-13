@@ -19,19 +19,13 @@ import java.util.List;
 
 @Data
 public class OrderReqDto {
-    private List<OrderReqItemDto> orderReqItemDtos;
-    @Data
-    public static class OrderReqItemDto {
-        private Long itemId;
-        private int count;
-    }
+    private Long itemId;
+    private int count;
 
 }
-/*
-{
-    "orderReqItemDtos" : [
+/* 컨트롤러에서 리스트로 변환 필요
+[
         {"itemId" : 1, "count" : 10},
         {"itemId" : 2, "count" : 15},
-    ]
-}
+]
  */
